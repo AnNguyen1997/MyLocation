@@ -1,3 +1,3 @@
 # MyLocation
 
-App that gets your current location
+App that gets your current location in "iOs Apprentice" book
