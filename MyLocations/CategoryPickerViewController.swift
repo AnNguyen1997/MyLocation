@@ -8,15 +8,11 @@
 
 import UIKit
 
-protocol CategoryPickerViewControllerDelegate: class {
-    func CategoryPickerViewController(_ controller: CategoryPickerViewController, didFinishPicking item: String )  
-}
 
 
 class CategoryPickerViewController: UITableViewController {
     
-    weak var delegate: CategoryPickerViewControllerDelegate?
-    var selectedCatergoryName = ""
+        var selectedCatergoryName = ""
     
     let categories = [
         "No Category",
@@ -44,12 +40,6 @@ class CategoryPickerViewController: UITableViewController {
         }
     }
     
-    @IBAction func done() {
-        delegate?.CategoryPickerViewController(self, didFinishPicking: selectedCatergoryName)
-    }
-
- 
-
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories.count
@@ -74,12 +64,22 @@ class CategoryPickerViewController: UITableViewController {
         if indexPath.row != selectedIndexPath.row {
             if let newCell = tableView.cellForRow(at: indexPath) {
                 newCell.accessoryType = .checkmark
-                selectedCatergoryName = categories[indexPath.row]
+                
             }
             if let oldCell = tableView.cellForRow(at: selectedIndexPath) {
                 oldCell.accessoryType = .none
             }
             selectedIndexPath = indexPath
+        }
+    }
+    
+    //MARK: -Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "PickedCategory" {
+            let cell = sender as! UITableViewCell
+            if let indexPath = tableView.indexPath(for: cell) {
+                selectedCatergoryName = categories[indexPath.row]
+            }
         }
     }
 

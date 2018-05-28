@@ -17,7 +17,7 @@ private let dateFormatter: DateFormatter = {
     return formatter
 }()
 
-class LocationDetailsViewController: UITableViewController, CategoryPickerViewControllerDelegate {
+class LocationDetailsViewController: UITableViewController {
 
     
     
@@ -62,6 +62,12 @@ class LocationDetailsViewController: UITableViewController, CategoryPickerViewCo
     }
     @IBAction func cancel() {
         navigationController?.popViewController(animated: true)
+    }
+    //Making unwind segue
+    @IBAction func categoryPickerDidPickCategory(_ segue: UIStoryboardSegue) {
+        let controller = segue.source as! CategoryPickerViewController
+        categoryName = controller.selectedCatergoryName
+        categoryLabel.text = categoryName
     }
     
     //MARK: -Table View Delegates
@@ -114,14 +120,8 @@ class LocationDetailsViewController: UITableViewController, CategoryPickerViewCo
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "PickCategory" {
             let controller = segue.destination as! CategoryPickerViewController
-            controller.delegate = self
             controller.selectedCatergoryName = categoryName
         }
     }
     
-    func CategoryPickerViewController(_ controller: CategoryPickerViewController, didFinishPicking item: String) {
-        categoryName = item
-        viewDidLoad()
-        navigationController?.popViewController(animated: true)
-    }
 }
