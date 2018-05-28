@@ -40,7 +40,7 @@ class CategoryPickerViewController: UITableViewController {
         }
     }
     
-    // MARK: - Table view data source
+    // MARK: - Table view delegates
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories.count
     }
@@ -72,6 +72,7 @@ class CategoryPickerViewController: UITableViewController {
             selectedIndexPath = indexPath
         }
     }
+    
     
     //MARK: -Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
