@@ -9,7 +9,6 @@
 import UIKit
 import CoreLocation
 
-
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .medium
@@ -18,7 +17,9 @@ private let dateFormatter: DateFormatter = {
     return formatter
 }()
 
-class LocationDetailsViewController: UITableViewController {
+class LocationDetailsViewController: UITableViewController, CategoryPickerViewControllerDelegate {
+
+    
     
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var categoryLabel: UILabel!
@@ -32,11 +33,14 @@ class LocationDetailsViewController: UITableViewController {
     var placemark : CLPlacemark?
     
     
+    var categoryName = "No Category"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         descriptionTextView.text = ""
-        categoryLabel.text = ""
+        categoryLabel.text = categoryName
         
         latitudeLabel.text = String(format: "%.8f", coordinate.latitude)
         longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
@@ -62,7 +66,7 @@ class LocationDetailsViewController: UITableViewController {
     
     //MARK: -Table View Delegates
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 && indexPath.row == 1 {
+        if indexPath.section == 0 && indexPath.row == 0 {
             return 88
         } else if indexPath.section == 2 && indexPath.row == 2 {
             addressLabel.frame.size = CGSize(width: view.bounds.size.width - 120, height: 10000)
@@ -104,5 +108,20 @@ class LocationDetailsViewController: UITableViewController {
     
     func format(date: Date) -> String {
         return dateFormatter.string(from: date)
+    }
+    
+    //MARK: -Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "PickCategory" {
+            let controller = segue.destination as! CategoryPickerViewController
+            controller.delegate = self
+            controller.selectedCatergoryName = categoryName
+        }
+    }
+    
+    func CategoryPickerViewController(_ controller: CategoryPickerViewController, didFinishPicking item: String) {
+        categoryName = item
+        viewDidLoad()
+        navigationController?.popViewController(animated: true)
     }
 }
