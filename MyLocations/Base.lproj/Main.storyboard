@@ -129,8 +129,9 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="addressLabel" destination="nf9-fg-jrq" id="Oxb-H8-S9d"/>
+                                    <outlet property="addressLabel" destination="wmM-fp-oDl" id="m7k-X7-4Hk"/>
                                     <outlet property="descriptionLabel" destination="nf9-fg-jrq" id="B87-KJ-F74"/>
+                                    <segue destination="4Rl-0H-MEp" kind="show" identifier="EditLocation" id="7q0-0a-I9S"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -460,4 +461,7 @@
     <resources>
         <image name="first" width="30" height="30"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="7q0-0a-I9S"/>
+    </inferredMetricsTieBreakers>
 </document>
