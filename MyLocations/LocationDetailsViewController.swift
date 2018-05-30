@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import CoreData
 
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -28,9 +29,11 @@ class LocationDetailsViewController: UITableViewController {
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     
+    var managedObjectContext: NSManagedObjectContext!
     
     var coordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var placemark : CLPlacemark?
+    var date = Date()
     
     
     var categoryName = "No Category"
@@ -51,7 +54,7 @@ class LocationDetailsViewController: UITableViewController {
             addressLabel.text = "No Address Found"
         }
         
-        dateLabel.text = format(date: Date())
+        dateLabel.text = format(date: date)
         
         //Hide Keyboard
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -74,11 +77,29 @@ class LocationDetailsViewController: UITableViewController {
     @IBAction func done() {
         let hudView = HudView.hud(inView: navigationController!.view, animated: true)
         let delayInSeconds = 0.6
-        afterDelay(delayInSeconds) {
-            hudView.hide()
-            self.navigationController?.popViewController(animated: true)
-        }
         hudView.text = "Tagged"
+        
+        let location = Location(context: managedObjectContext)
+        
+        location.locationDescription = descriptionTextView.text
+        location.category = categoryName
+        location.latitude = coordinate.latitude
+        location.longitude = coordinate.longitude
+        location.date = date
+        location.placemark = placemark
+        
+        do {
+            try managedObjectContext.save()
+            afterDelay(delayInSeconds) {
+                hudView.hide()
+                self.navigationController?.popViewController(animated: true)
+            }
+        } catch  {
+            fatalCoreDataError(error)
+        }
+        
+        
+        
         
     }
     @IBAction func cancel() {
