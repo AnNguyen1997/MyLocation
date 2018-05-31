@@ -70,12 +70,13 @@ class LocationsViewController: UITableViewController {
         let entity = Location.entity()
         fetchRequest.entity = entity
         
-        let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        let sortDescriptor1 = NSSortDescriptor(key: "category", ascending: true)
+        let sortDescriptor2 = NSSortDescriptor(key: "date", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor1, sortDescriptor2]
         
         fetchRequest.fetchBatchSize = 20
         
-        let fetchedResultsController = NSFetchedResultsController<Location>(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: "Locations")
+        let fetchedResultsController = NSFetchedResultsController<Location>(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: "category", cacheName: "Locations")
         
         fetchedResultsController.delegate = self
         return fetchedResultsController
@@ -90,6 +91,7 @@ class LocationsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         performFetch()
+        navigationItem.rightBarButtonItem = editButtonItem
     }
     
     // MARK : - Private methods
@@ -102,7 +104,17 @@ class LocationsViewController: UITableViewController {
     }
 
     // MARK: - Table view delegates
-
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        let sectionNumbers = fetchedResultsController.sections!.count
+        return sectionNumbers
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionHeader = fetchedResultsController.sections![section]
+        return sectionHeader.name
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
@@ -116,6 +128,18 @@ class LocationsViewController: UITableViewController {
         cell.configure(for: location)
     
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let location = fetchedResultsController.object(at: indexPath)
+            managedObjectContext.delete(location)
+            do {
+                try managedObjectContext.save()
+            } catch {
+                fatalCoreDataError(error)
+            }
+        }
     }
     
     //MARK: - Navigation
